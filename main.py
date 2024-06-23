@@ -6,12 +6,15 @@ def main():
     ruta_salida = 'output.txt'
 
     try:
+        #Analizador Lexico
         resultado, valido = anlex.analizar_archivo(ruta_archivo)
         anlex.guardar_resultado(resultado, ruta_salida)
-        if not  valido:
+        if not valido:
             print("Error léxico. Revise el archivo {}".format(ruta_archivo))
+        # Análisis sintáctico
         ansic = AnalizadorSintactico(resultado)
-        ansic.analizar_archivo(resultado)
+        ansic.analizar_archivo()
+        print("Análisis sintáctico completado sin errores.")
     except IOError as e:
         print(f"Error al abrir el archivo: {e}")
     except Exception as e:
