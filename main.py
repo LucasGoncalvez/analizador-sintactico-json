@@ -15,12 +15,18 @@ def main():
             sys.exit()
         # Análisis sintáctico
         ansic = AnalizadorSintactico(resultado)
-        ansic.analizar_archivo()
-        print("Análisis sintáctico completado sin errores.")
+        errores, valido = ansic.analizar_archivo()
+        if not valido:
+            print("Error sintáctico. Revise el archivo {}".format(ruta_archivo))
+            for error in errores:
+                print(error)
+            sys.exit()
+        #
+        print("Análisis completado sin errores.")
     except IOError as e:
         print(f"Error al abrir el archivo: {e}")
     except Exception as e:
-        print(f"Se produjo un error: {e}")
+        print(f"Se produjo un error: {str(e)}")
 
 if __name__ == "__main__":
     main()
