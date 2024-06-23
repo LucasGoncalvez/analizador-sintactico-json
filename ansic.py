@@ -1,6 +1,7 @@
 from tablaSimbolos import simbolos
 EOF = ""
 
+
 class AnalizadorSintactico:
     def __init__(self, lexemas):
         self.lexemas = lexemas
@@ -27,128 +28,152 @@ class AnalizadorSintactico:
         else:
             self.error()
             
-
-    def element(self):
+    def element(self, synchset):
         conjunto_prim = [simbolos["{"], simbolos["["]]
         conjunto_sgte = [simbolos[","], simbolos["]"], simbolos["}"], EOF]
         self.check_input(conjunto_prim, conjunto_sgte)
-        if(self.token_actual == simbolos["{"]):
-            self.object(conjunto_sgte)
-        elif(self.token_actual == simbolos["["]):
-            self.array(conjunto_sgte)
-        else:
-            self.error()
-        self.check_input(conjunto_sgte, conjunto_prim)
+        if not self.token_actual in synchset:
+            if(self.token_actual == simbolos["{"]):
+                self.object(conjunto_sgte)
+            elif(self.token_actual == simbolos["["]):
+                self.array(conjunto_sgte)
+            else:
+                self.error()
+            self.check_input(conjunto_sgte, conjunto_prim)
         
-
     def object(self, synchset):
         conjunto_prim = [simbolos["{"]]
         conjunto_sgte = [simbolos[","], simbolos["]"], simbolos["}"], EOF]
-        self.check_input(conjunto_prim,synchset)
-        if self.token_actual == simbolos["{"]:
-            self.match(simbolos["{"], conjunto_sgte)
-            self.attribute_list([simbolos["}"]] + conjunto_sgte)
-            self.match(simbolos["}"], conjunto_sgte)
-        self.check_input(conjunto_sgte, conjunto_prim)
+        self.check_input(conjunto_prim, conjunto_sgte)
+        if not self.token_actual in synchset:
+            if self.token_actual == simbolos["{"]:
+                self.match(simbolos["{"])
+                if self.token_actual == simbolos["}"]:
+                    self.match(simbolos["}"])
+                elif self.token_actual == simbolos["string"]:
+                    self.attribute_list(synchset)
+                    self.match(simbolos["}"])
+                else:
+                    self.error()
+            else:
+                self.error()
+            self.check_input(conjunto_sgte, conjunto_prim)
 
     def array(self, synchset):
         conjunto_prim = [simbolos["["]]
         conjunto_sgte = [simbolos[","], simbolos["]"], simbolos["}"], EOF]
         self.check_input(conjunto_prim, conjunto_sgte)
-        if self.token_actual == simbolos["["]:
-            self.match(simbolos["["], conjunto_sgte)
-            self.element_list([simbolos["]"]] + conjunto_sgte)
-            self.match(simbolos["]"], conjunto_sgte)
-        self.check_input(conjunto_sgte, conjunto_prim)
+        if not self.token_actual in synchset:
+            if self.token_actual == simbolos["["]:
+                self.match(simbolos["["])
+                if self.token_actual == simbolos["]"]:
+                    self.match(simbolos["]"])
+                elif self.token_actual in [simbolos["{"], simbolos["["]]:
+                    self.element_list(synchset)
+                    self.match(simbolos["]"])
+                else:
+                    self.error()
+            else:
+                self.error()
+            self.check_input(conjunto_sgte, conjunto_prim)
 
     def element_list(self, synchset):
         conjunto_prim = [simbolos["{"], simbolos["["]]
         conjunto_sgte = [simbolos["]"]]
         self.check_input(conjunto_prim, conjunto_sgte)
-        if self.token_actual in conjunto_prim:
-            self.element(synchset)
-            self.element_list_aux(synchset)
-        self.check_input(conjunto_sgte, conjunto_prim)
-        pass
+        if not self.token_actual in synchset:
+            if self.token_actual in conjunto_prim:
+                self.element(synchset)
+                self.element_list_aux(synchset)
+            else:
+                self.error()
+            self.check_input(conjunto_sgte, conjunto_prim)
 
     def element_list_aux(self, synchset):
+        '''Nuevo NT de la gramática corregida.'''
         conjunto_prim = [simbolos[","]]
         conjunto_sgte = [simbolos["]"]]
         self.check_input(conjunto_prim, conjunto_sgte)
-        if self.token_actual == simbolos[","]:
-            self.match(simbolos[","])
-            self.element(conjunto_sgte)
-            self.element_list_aux(synchset)
-        self.check_input(conjunto_sgte, conjunto_prim)
-        pass
+        if not self.token_actual in synchset:
+            if self.token_actual == simbolos[","]:
+                self.match(simbolos[","])
+                self.element(conjunto_sgte)
+                self.element_list_aux(synchset)
+            self.check_input(conjunto_sgte, conjunto_prim)
 
     def attribute_list(self, synchset):
         conjunto_prim = [simbolos["string"]]
         conjunto_sgte = [simbolos["}"]]
         self.check_input(conjunto_prim, conjunto_sgte)
-        if self.token_actual == simbolos["string"]:
-            self.attribute(synchset)
-            self.attribute_list_aux(synchset)
-        self.check_input(conjunto_sgte, conjunto_prim)
-        pass
+        if not self.token_actual in synchset:
+            if self.token_actual == simbolos["string"]:
+                self.attribute(synchset)
+                self.attribute_list_aux(synchset)
+            else:
+                self.error()
+            self.check_input(conjunto_sgte, conjunto_prim)
 
     def attribute_list_aux(self, synchset):
         conjunto_prim = [simbolos[","]]
         conjunto_sgte = [simbolos["}"]]
         self.check_input(conjunto_prim, conjunto_sgte)
-        if self.token_actual == simbolos[","]:
-            self.match(simbolos[","])
-            self.attribute(synchset)
-            self.attribute_list_aux(synchset)
-        self.check_input(conjunto_sgte, conjunto_prim)
-        pass
+        if not self.token_actual in synchset:
+            if self.token_actual == simbolos[","]:
+                self.match(simbolos[","])
+                self.attribute(synchset)
+                self.attribute_list_aux(synchset)
+            self.check_input(conjunto_sgte, conjunto_prim)
 
     def attribute(self, synchset):
         conjunto_prim = [simbolos["string"]]
         conjunto_sgte = [simbolos[","], simbolos["}"]]
         self.check_input(conjunto_prim, conjunto_sgte)
-        if self.token_actual == simbolos["string"]:
-            self.attribute_name(synchset)
-            self.match(simbolos[":"])
-            self.attribute_value(synchset)
-        self.check_input(conjunto_sgte, conjunto_prim)
-        pass
+        if not self.token_actual in synchset:
+            if self.token_actual == simbolos["string"]:
+                self.attribute_name(synchset)
+                self.match(simbolos[":"])
+                self.attribute_value(synchset)
+            else:
+                self.error()
+            self.check_input(conjunto_sgte, conjunto_prim)
 
     def attribute_name(self, synchset):
         conjunto_prim = [simbolos["string"]]
         conjunto_sgte = [simbolos[":"]]
         self.check_input(conjunto_prim, conjunto_sgte)
-        if self.token_actual == simbolos["string"]:
-            self.match(simbolos["string"])
-        self.check_input(conjunto_sgte, conjunto_prim)
-        pass
+        if not self.token_actual in synchset:
+            if self.token_actual == simbolos["string"]:
+                self.match(simbolos["string"])
+            else:
+                self.error()
+            self.check_input(conjunto_sgte, conjunto_prim)
 
     def attribute_value(self, synchset):
-        conjunto_prim = [simbolos["{"], simbolos["["], simbolos["string"], simbolos["number"], simbolos["true"], simbolos["false"], simbolos["null"]]
+        conjunto_prim = [simbolos["{"], simbolos["["], simbolos["string"], simbolos["number"], 
+                         simbolos["true"], simbolos["false"], simbolos["null"]]
         conjunto_sgte = [simbolos[","], simbolos["}"]]
         self.check_input(conjunto_prim, conjunto_sgte)
-        if self.token_actual in conjunto_prim:
-            if self.token_actual == simbolos["{"] or self.token_actual == simbolos["["]:
-                self.element(synchset)
-            elif self.token_actual == simbolos["string"]:
-                self.match(simbolos["string"])
-            elif self.token_actual == simbolos["number"]:
-                self.match(simbolos["number"])
-            elif self.token_actual == simbolos["true"]:
-                self.match(simbolos["true"])
-            elif self.token_actual == simbolos["false"]:
-                self.match(simbolos["false"])
-            elif self.token_actual == simbolos["null"]:
-                self.match(simbolos["null"])
-        else:
-            self.error()
-        self.check_input(conjunto_sgte, conjunto_prim)
-        pass
+        if not self.token_actual in synchset:
+            if self.token_actual in conjunto_prim:
+                if self.token_actual == simbolos["{"] or self.token_actual == simbolos["["]:
+                    self.element(synchset)
+                elif self.token_actual == simbolos["string"]:
+                    self.match(simbolos["string"])
+                elif self.token_actual == simbolos["number"]:
+                    self.match(simbolos["number"])
+                elif self.token_actual == simbolos["true"]:
+                    self.match(simbolos["true"])
+                elif self.token_actual == simbolos["false"]:
+                    self.match(simbolos["false"])
+                elif self.token_actual == simbolos["null"]:
+                    self.match(simbolos["null"])
+            else:
+                self.error()
+            self.check_input(conjunto_sgte, conjunto_prim)
 
     # Funciones para Panic Mode
     def error(self):
         self.errores.append(f"Error sintáctico en token {self.token_actual} en posición {self.lexemas[self.posicion_actual][0]}")
-
 
     def check_input(self, firsts, follows):
         if self.token_actual not in firsts:
