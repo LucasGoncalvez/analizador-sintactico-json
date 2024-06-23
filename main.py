@@ -1,12 +1,15 @@
-import anlex
+import anlex, ansic
 
 def main():
     ruta_archivo = 'fuente.txt'
     ruta_salida = 'output.txt'
 
     try:
-        resultado = anlex.analizar_archivo(ruta_archivo)
+        resultado, valido = anlex.analizar_archivo(ruta_archivo)
         anlex.guardar_resultado(resultado, ruta_salida)
+        if not  valido:
+            print("Error léxico. Revise el archivo {}".format(ruta_archivo))
+        ansic.analizar_archivo(resultado)
     except IOError as e:
         print(f"Error al abrir el archivo: {e}")
     except Exception as e:

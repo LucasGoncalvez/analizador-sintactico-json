@@ -28,9 +28,7 @@ exp_reg = {
 }
 
 def encuentra_coincidencia(cadena,expresion_regular):
-    # Compilar la expresión regular para un uso eficiente si se llama múltiples veces
     patron = re.compile(expresion_regular)
-    
     # Buscar la expresión regular en la cadena
     if patron.fullmatch(cadena):
         return True
