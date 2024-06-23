@@ -1,4 +1,5 @@
-import anlex, ansic
+import anlex
+from ansic import AnalizadorSintactico
 
 def main():
     ruta_archivo = 'fuente.txt'
@@ -9,6 +10,7 @@ def main():
         anlex.guardar_resultado(resultado, ruta_salida)
         if not  valido:
             print("Error léxico. Revise el archivo {}".format(ruta_archivo))
+        ansic = AnalizadorSintactico(resultado)
         ansic.analizar_archivo(resultado)
     except IOError as e:
         print(f"Error al abrir el archivo: {e}")

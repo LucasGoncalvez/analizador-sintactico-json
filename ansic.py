@@ -1,60 +1,79 @@
 from tablaSimbolos import simbolos
 EOF = ""
 
-def analizar_archivo(lexemas):
-    token_actual = None
-    posicion_actual = 0
-    def get_token():
-        nonlocal token_actual
-        nonlocal posicion_actual
-        if posicion_actual < len(lexemas):
-            token_actual = lexemas[posicion_actual]
-            posicion_actual += 1
+class AnalizadorSintactico:
+    def __init__(self, lexemas):
+        self.lexemas = lexemas
+        self.posicion_actual = 0
+        self.token_actual = None
+        self.get_token()
+
+    def get_token(self):
+        if self.posicion_actual < len(self.lexemas):
+            self.token_actual = self.lexemas[self.posicion_actual][1]  # Guarda solo el componente léxico
+            self.posicion_actual += 1
         else:
-            return None
-    # Inicia el analisis sintactico
-    get_token()
-    conjunto_sgte = [EOF]
-    json(conjunto_sgte)
+            self.token_actual = EOF
 
-def json(synchset):
-    conjunto_prim = []
-    check_input(conjunto_prim, synchset)
-    pass
+    def analizar_archivo(self):
+        conjunto_sgte = [EOF]
+        self.json(conjunto_sgte)
 
-def element(synchset):
-    pass
+    def json(self, synchset):
+        conjunto_prim = [simbolos["{"], simbolos["["]]  # ["L_LLAVE", "L_CORCHETE"]
+        if self.token_actual in conjunto_prim:
+            self.element()
+        else:
+            pass # TODO: Error sintáctico
 
-def array(synchset):
-    pass
+    def element(self, synchset):
+        conjunto_prim = [simbolos["{"], simbolos["["]]
+        conjunto_sgte = [simbolos[","], simbolos["]"], simbolos["}"], EOF]
+        self.check_input(conjunto_prim, conjunto_sgte)
+        if(self.token_actual == simbolos["{"]):
+            self.object(conjunto_sgte)
+        elif(self.token_actual == simbolos["["]):
+            self.array(conjunto_sgte)
+        else:
+            pass # TODO: Error sintáctico
+        self.check_input(conjunto_sgte, conjunto_prim)
 
-def element_list(synchset):
-    pass
+    def object(self, synchset):
+        pass
 
-def element_list_aux(synchset):
-    pass
+    def array(self, synchset):
+        pass
 
-def object(synchset):
-    pass
+    def element_list(self, synchset):
+        pass
 
-def attribute_list(synchset):
-    pass
+    def element_list_aux(self, synchset):
+        pass
 
-def attribute_list_aux(synchset):
-    pass
+    def attribute_list(self, synchset):
+        pass
 
-def attribute(synchset):
-    pass
+    def attribute_list_aux(self, synchset):
+        pass
 
-def attribute_name(synchset):
-    pass
+    def attribute(self, synchset):
+        pass
 
-def attribute_value(synchset):
-    pass
+    def attribute_name(self, synchset):
+        pass
 
-# Funciones para Panic Mode
-def check_input(firsts, follows):
-    pass
+    def attribute_value(self, synchset):
+        pass
 
-def scanto(synchset):
-    pass
+    # Funciones para Panic Mode
+    def error(self):
+        pass
+
+    def check_input(self, firsts, follows):
+        if self.token_actual not in firsts:
+            self.error()
+            self.scanto(firsts + follows)
+
+    def scanto(self, synchset):
+        while self.token_actual not in (synchset + [EOF]):
+            self.get_token()
