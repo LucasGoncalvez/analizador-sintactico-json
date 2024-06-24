@@ -174,7 +174,7 @@ class AnalizadorSintactico:
 
     # Funciones para Panic Mode
     def error(self):
-        self.errores.append(f"Error sintáctico en token {self.token_actual} en posición {self.lexemas[self.posicion_actual][0]}")
+        self.errores.append(f"Error sintáctico en token {self.token_actual} en línea {self.lexemas[self.posicion_actual][0]}")
 
     def check_input(self, firsts, follows):
         if self.token_actual not in firsts:

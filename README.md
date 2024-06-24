@@ -1,15 +1,15 @@
-analizador-lexico-json
-Analizador léxico que recibe archivos txt con formatos JSON como contenido y retorna los lexemas
+analizador-sintáctico-json
+Analizador sintáctico que recibe un archivo txt con contenido de lenguaje JSON y retorna los errores sintácticos en caso que hubiesen.
 
 Para la ejecución del programa seguir los siguientes pasos:
 
-1 - Se debe tener dentro de la carpeta fuente el archivo .txt con la fuente del Json a analizar cuyo nombre será "fuente.txt"
+1 - Se debe tener dentro de la carpeta fuente del proyecto el archivo "fuente.txt" con la fuente del JSON a analizar.
 
-2 - Ejecutar la consola de CMD y dirigirse a la carpeta del proyecto
+2 - Ejecutar la consola de CMD y dirigirse a la carpeta del proyecto.
 
-3 - Ejecutar el comando python anlex.py
+3 - Ejecutar el comando python main.py
 
-4 - Se generará en la carpeta del proyecto el archivo "output.txt" con el resultado del análisis léxico.
+4 - Se mostrará en consola el resultado del análisis sintáctico.
 
 Integrantes :
 
