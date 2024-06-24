@@ -1,5 +1,6 @@
-analizador-sintáctico-json
-Analizador sintáctico que recibe un archivo txt con contenido de lenguaje JSON y retorna los errores sintácticos en caso que hubiesen.
+<h1>Analizador sintáctico JSON</h1>
+Analizador sintáctico que recibe un archivo txt con contenido de lenguaje JSON y retorna los errores sintácticos en caso que hubiesen.  <br>
+La rama principal master contiene el código completo.  <br>
 
 Para la ejecución del programa seguir los siguientes pasos:
 
@@ -11,7 +12,7 @@ Para la ejecución del programa seguir los siguientes pasos:
 
 4 - Se mostrará en consola el resultado del análisis sintáctico.
 
-Integrantes :
+<h2>Integrantes:</h2>
 
-Lucas Damián Goncalvez Basabe
+Lucas Damián Goncalvez Basabe <br>
 Iván Alfredo Sánchez Rojas
